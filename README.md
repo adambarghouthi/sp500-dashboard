@@ -48,7 +48,7 @@ docker compose -f docker-compose.dev.yml up --build
 | App | http://localhost:3000 |
 | API | http://localhost:8000 |
 
-> **First boot takes 3–6 minutes.** The backend seeds 5 years of daily OHLCV data for ~500 S&P 500 companies from Yahoo Finance. A progress screen is shown in the browser during seeding. Subsequent starts are instant — data persists in a Docker volume.
+> Data is fetched on-demand from Yahoo Finance — no seeding required. The app is ready immediately after the containers start.
 
 ---
 
@@ -78,8 +78,6 @@ bun run dev
 ```
 
 Open http://localhost:3000. The frontend proxies `/api/*` to `http://localhost:8000` by default (no extra config needed).
-
-> **First boot**: same 3–6 minute seeding applies. The SQLite database is written to `backend/db/stocks.db` locally instead of a Docker volume.
 
 ---
 
@@ -144,7 +142,7 @@ browser → Next.js (port 3000) → /api/* rewrite → FastAPI (port 8000)
 | `models.py` | SQLAlchemy 2.0 async ORM (Note model) |
 | `tickers.py` | Hardcoded list of 503 S&P 500 tickers with company names and sectors |
 | `database.py` | Async SQLAlchemy engine and session setup |
-| `routers/stocks.py` | Companies, OHLCV history, market summary, health/seeding progress |
+| `routers/stocks.py` | Companies (paginated), OHLCV history, market summary, health check |
 | `routers/notes.py` | CRUD for research notes |
 | `routers/ai.py` | GPT-4o chat with function calling + json-render spec output |
 | `routers/ws.py` | WebSocket endpoint for real-time price streaming |
@@ -156,7 +154,7 @@ browser → Next.js (port 3000) → /api/* rewrite → FastAPI (port 8000)
 | `app/` | Next.js 14 App Router pages |
 | `components/charts/CandlestickChart.tsx` | TradingView Lightweight Charts integration |
 | `components/layout/TickerTape.tsx` | Live scrolling price ticker |
-| `components/loading/SeedingScreen.tsx` | First-boot progress screen |
+| `components/loading/SeedingScreen.tsx` | Loading screen shown during initial data fetch |
 | `lib/api.ts` | Axios API client for all backend calls |
 | `lib/ws.ts` | WebSocket client for live price updates |
 | `lib/json-render/` | Custom json-render catalog + registry (Recharts for AI charts) |
@@ -168,8 +166,9 @@ browser → Next.js (port 3000) → /api/* rewrite → FastAPI (port 8000)
 
 | Method | Path | Description |
 |---|---|---|
-| GET | `/api/health` | Seeding status and progress |
-| GET | `/api/companies` | All companies with latest prices |
+| GET | `/api/health` | App health check |
+| GET | `/api/companies` | Paginated companies (`?page=&per_page=&search=&sector=&sort_by=&sort_dir=`) |
+| GET | `/api/sectors` | List of all S&P 500 sectors |
 | GET | `/api/stocks/{ticker}/ohlcv` | OHLCV history (`?start=YYYY-MM-DD&end=YYYY-MM-DD`) |
 | GET | `/api/market/summary` | Index data and top movers |
 | POST | `/api/notes` | Create a note |
@@ -185,6 +184,5 @@ browser → Next.js (port 3000) → /api/* rewrite → FastAPI (port 8000)
 
 - Data sourced from **Yahoo Finance via yfinance** — free, no API key required
 - **~15 second data lag** vs true real-time (polling, not streaming)
-- 5 years of daily OHLCV data stored locally in SQLite
-- Stock detail pages fetch OHLCV data on-demand from Yahoo Finance (not from the local DB)
+- All OHLCV data fetched on-demand; research notes persisted in SQLite
 - **For educational and research purposes only. Not financial advice.**
