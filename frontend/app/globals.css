@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 6% 4%;
+    --foreground: 214 32% 91%;
+    --card: 240 6% 6%;
+    --card-foreground: 214 32% 91%;
+    --primary: 42 95% 56%;
+    --primary-foreground: 240 6% 4%;
+    --muted: 215 16% 47%;
+    --muted-foreground: 215 16% 47%;
+    --border: 240 6% 12%;
+    --input: 240 6% 12%;
+    --ring: 42 95% 56%;
+    --gain: 142 71% 45%;
+    --loss: 0 72% 51%;
+    --radius: 0.375rem;
+  }
+}
+
+* {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  background-color: #0A0A0C;
+  color: #E2E8F0;
+  font-family: 'DM Mono', monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Amber glow effect for chart containers */
+.chart-glow {
+  box-shadow: 0 0 40px -10px rgba(240, 180, 41, 0.15);
+}
+.chart-glow:hover {
+  box-shadow: 0 0 60px -10px rgba(240, 180, 41, 0.25);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Number formatting */
+.price {
+  font-family: 'DM Mono', monospace;
+  font-variant-numeric: tabular-nums;
+}
+.gain-text {
+  color: #16A34A;
+}
+.loss-text {
+  color: #DC2626;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(240, 180, 41, 0.3);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(240, 180, 41, 0.5);
+}
+
+/* Ticker tape animation */
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-scroll {
+  animation: ticker-scroll 60s linear infinite;
+}
+.ticker-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Background grid pattern */
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(240, 180, 41, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 180, 41, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Typing indicator */
+@keyframes typing-dot {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-4px); }
+}
+.typing-dot:nth-child(1) { animation: typing-dot 1.2s ease-in-out infinite; }
+.typing-dot:nth-child(2) { animation: typing-dot 1.2s ease-in-out 0.2s infinite; }
+.typing-dot:nth-child(3) { animation: typing-dot 1.2s ease-in-out 0.4s infinite; }
+
+/* Progress bar shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.progress-shimmer {
+  background: linear-gradient(
+    90deg,
+    #F0B429 0%,
+    #FFD700 40%,
+    #F0B429 60%,
+    #C89010 100%
+  );
+  background-size: 200% auto;
+  animation: shimmer 2s linear infinite;
+}
